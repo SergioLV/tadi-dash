@@ -1,6 +1,6 @@
 import { Visit, Lead } from "./types";
 import { decryptData } from "./crypto";
-import UAParser from "ua-parser-js";
+import { UAParser } from "ua-parser-js";
 
 const VISITS_API =
   "https://nzz30ikxtk.execute-api.us-east-1.amazonaws.com/prod/visit";
@@ -8,13 +8,13 @@ const LEADS_API =
   "https://6gbja909qf.execute-api.us-east-1.amazonaws.com/prod/leads";
 
 function parseUserAgent(ua: string): { browser: string; os: string; device: string } {
-  const parser = new UAParser(ua);
-  const browser = parser.getBrowser();
-  const os = parser.getOS();
+  const result = UAParser(ua);
+  const browser = result.browser;
+  const os = result.os;
   return {
     browser: `${browser.name || "Unknown"} ${browser.version || ""}`.trim(),
     os: `${os.name || "Unknown"} ${os.version || ""}`.trim(),
-    device: parser.getDevice().type || "desktop",
+    device: result.device.type || "desktop",
   };
 }
 

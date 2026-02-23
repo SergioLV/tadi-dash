@@ -30,7 +30,7 @@ export default function LoginPage() {
         <div className="bg-white rounded-3xl shadow-lg p-8">
           <div className="text-center mb-8">
             <img
-              src="/eligeunplan.webp"
+              src="/eligeunplan/eligeunplan.webp"
               alt="Elige un Plan"
               className="h-12 mx-auto mb-4"
             />

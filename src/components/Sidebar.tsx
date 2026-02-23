@@ -18,7 +18,7 @@ export default function Sidebar() {
     <aside className="w-64 bg-white border-r border-gray min-h-screen flex flex-col shadow-sm">
       <div className="p-6 border-b border-gray">
         <Link href="/admin" className="flex items-center gap-3">
-          <img src="/eligeunplan.webp" alt="Elige un Plan" className="h-8 w-auto" />
+          <img src="/eligeunplan/eligeunplan.webp" alt="Elige un Plan" className="h-8 w-auto" />
           <span className="font-semibold text-dark text-sm">Admin Panel</span>
         </Link>
       </div>
