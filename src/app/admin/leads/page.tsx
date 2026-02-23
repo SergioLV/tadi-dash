@@ -80,55 +80,87 @@ export default function LeadsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-dark">Leads</h1>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <h1 className="text-xl sm:text-2xl font-bold text-dark">Leads</h1>
         <button
           onClick={handleExport}
-          className="px-4 py-2 bg-primary hover:bg-primary-dark text-white text-sm font-medium rounded-xl transition-colors"
+          className="px-4 py-2 bg-primary hover:bg-primary-dark text-white text-sm font-medium rounded-xl transition-colors w-full sm:w-auto"
         >
           Exportar CSV
         </button>
       </div>
 
-      <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray/50 flex flex-wrap gap-3">
+      <div className="bg-white rounded-2xl p-3 sm:p-4 shadow-sm border border-gray/50 flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-3">
         <input
           type="text"
           placeholder="Buscar por nombre o teléfono..."
           value={search}
           onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-          className="flex-1 min-w-[200px] px-4 py-2.5 rounded-xl border border-gray bg-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+          className="w-full sm:flex-1 sm:min-w-[200px] px-4 py-2.5 rounded-xl border border-gray bg-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
         />
-        <input
-          type="date"
-          value={dateFrom}
-          onChange={(e) => { setDateFrom(e.target.value); setPage(1); }}
-          className="px-4 py-2.5 rounded-xl border border-gray bg-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
-        />
-        <input
-          type="date"
-          value={dateTo}
-          onChange={(e) => { setDateTo(e.target.value); setPage(1); }}
-          className="px-4 py-2.5 rounded-xl border border-gray bg-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
-        />
-        <select
-          value={filterIsapre}
-          onChange={(e) => { setFilterIsapre(e.target.value); setPage(1); }}
-          className="px-4 py-2.5 rounded-xl border border-gray bg-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
-        >
-          <option value="">Todas las Isapres</option>
-          {isapres.map((i) => <option key={i} value={i}>{i}</option>)}
-        </select>
-        <select
-          value={filterRegion}
-          onChange={(e) => { setFilterRegion(e.target.value); setPage(1); }}
-          className="px-4 py-2.5 rounded-xl border border-gray bg-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
-        >
-          <option value="">Todas las Regiones</option>
-          {regions.map((r) => <option key={r} value={r}>{r}</option>)}
-        </select>
+        <div className="flex gap-2 w-full sm:w-auto">
+          <input
+            type="date"
+            value={dateFrom}
+            onChange={(e) => { setDateFrom(e.target.value); setPage(1); }}
+            className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl border border-gray bg-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+          />
+          <input
+            type="date"
+            value={dateTo}
+            onChange={(e) => { setDateTo(e.target.value); setPage(1); }}
+            className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl border border-gray bg-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+          />
+        </div>
+        <div className="flex gap-2 w-full sm:w-auto">
+          <select
+            value={filterIsapre}
+            onChange={(e) => { setFilterIsapre(e.target.value); setPage(1); }}
+            className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl border border-gray bg-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+          >
+            <option value="">Todas las Isapres</option>
+            {isapres.map((i) => <option key={i} value={i}>{i}</option>)}
+          </select>
+          <select
+            value={filterRegion}
+            onChange={(e) => { setFilterRegion(e.target.value); setPage(1); }}
+            className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl border border-gray bg-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+          >
+            <option value="">Todas las Regiones</option>
+            {regions.map((r) => <option key={r} value={r}>{r}</option>)}
+          </select>
+        </div>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-gray/50 overflow-hidden">
+      {/* Mobile card view */}
+      <div className="md:hidden space-y-3">
+        {paginated.map((l, i) => (
+          <div
+            key={i}
+            onClick={() => setSelectedLead(l)}
+            className="bg-white rounded-2xl p-4 shadow-sm border border-gray/50 space-y-2 text-sm cursor-pointer active:bg-surface/50"
+          >
+            <div className="flex justify-between items-center">
+              <span className="font-medium text-dark">{l.name}</span>
+              <span className="text-xs text-light">
+                {(() => { try { return format(parseISO(l.timestamp), "dd/MM/yy"); } catch { return l.timestamp; } })()}
+              </span>
+            </div>
+            <div className="grid grid-cols-2 gap-1 text-xs">
+              <span className="text-light">Teléfono</span><span className="text-dark">{l.phone}</span>
+              <span className="text-light">Isapre</span><span className="text-dark">{l.currentIsapre}</span>
+              <span className="text-light">Región</span><span className="text-dark">{l.region}</span>
+              <span className="text-light">Ingreso</span><span className="text-dark">${l.monthlyIncome?.toLocaleString()}</span>
+            </div>
+          </div>
+        ))}
+        {paginated.length === 0 && (
+          <div className="text-center py-8 text-light text-sm">No se encontraron leads</div>
+        )}
+      </div>
+
+      {/* Desktop table view */}
+      <div className="hidden md:block bg-white rounded-2xl shadow-sm border border-gray/50 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
@@ -202,7 +234,7 @@ export default function LeadsPage() {
           onClick={() => setSelectedLead(null)}
         >
           <div
-            className="bg-white rounded-3xl p-8 max-w-lg w-full shadow-xl"
+            className="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-xl max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-6">

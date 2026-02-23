@@ -80,39 +80,67 @@ export default function VisitsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-dark">Visitas</h1>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <h1 className="text-xl sm:text-2xl font-bold text-dark">Visitas</h1>
         <button
           onClick={handleExport}
-          className="px-4 py-2 bg-primary hover:bg-primary-dark text-white text-sm font-medium rounded-xl transition-colors"
+          className="px-4 py-2 bg-primary hover:bg-primary-dark text-white text-sm font-medium rounded-xl transition-colors w-full sm:w-auto"
         >
           Exportar CSV
         </button>
       </div>
 
-      <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray/50 flex flex-wrap gap-3">
+      <div className="bg-white rounded-2xl p-3 sm:p-4 shadow-sm border border-gray/50 flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-3">
         <input
           type="text"
           placeholder="Buscar por browser, OS, referrer, IP..."
           value={search}
           onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-          className="flex-1 min-w-[200px] px-4 py-2.5 rounded-xl border border-gray bg-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+          className="w-full sm:flex-1 sm:min-w-[200px] px-4 py-2.5 rounded-xl border border-gray bg-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
         />
-        <input
-          type="date"
-          value={dateFrom}
-          onChange={(e) => { setDateFrom(e.target.value); setPage(1); }}
-          className="px-4 py-2.5 rounded-xl border border-gray bg-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
-        />
-        <input
-          type="date"
-          value={dateTo}
-          onChange={(e) => { setDateTo(e.target.value); setPage(1); }}
-          className="px-4 py-2.5 rounded-xl border border-gray bg-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
-        />
+        <div className="flex gap-2 w-full sm:w-auto">
+          <input
+            type="date"
+            value={dateFrom}
+            onChange={(e) => { setDateFrom(e.target.value); setPage(1); }}
+            className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl border border-gray bg-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+          />
+          <input
+            type="date"
+            value={dateTo}
+            onChange={(e) => { setDateTo(e.target.value); setPage(1); }}
+            className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl border border-gray bg-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+          />
+        </div>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-gray/50 overflow-hidden">
+      {/* Mobile card view */}
+      <div className="md:hidden space-y-3">
+        {paginated.map((v, i) => (
+          <div key={i} className="bg-white rounded-2xl p-4 shadow-sm border border-gray/50 space-y-2 text-sm">
+            <div className="flex justify-between items-center">
+              <span className="font-medium text-dark">
+                {(() => { try { return format(parseISO(v.timestamp), "dd/MM/yy HH:mm"); } catch { return v.timestamp; } })()}
+              </span>
+              <span className="text-xs text-light">{v.ip || "—"}</span>
+            </div>
+            <div className="grid grid-cols-2 gap-1 text-xs">
+              <span className="text-light">Browser</span><span className="text-dark">{v.browser}</span>
+              <span className="text-light">OS</span><span className="text-dark">{v.os}</span>
+              <span className="text-light">Referrer</span><span className="text-dark truncate">{v.referrer || "—"}</span>
+              <span className="text-light">Pantalla</span><span className="text-dark">{v.screenWidth}×{v.screenHeight}</span>
+              <span className="text-light">Idioma</span><span className="text-dark">{v.language}</span>
+              <span className="text-light">UTM</span><span className="text-dark">{v.utmSource || "—"}</span>
+            </div>
+          </div>
+        ))}
+        {paginated.length === 0 && (
+          <div className="text-center py-8 text-light text-sm">No se encontraron visitas</div>
+        )}
+      </div>
+
+      {/* Desktop table view */}
+      <div className="hidden md:block bg-white rounded-2xl shadow-sm border border-gray/50 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
